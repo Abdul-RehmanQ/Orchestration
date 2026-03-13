@@ -1,63 +1,101 @@
 import re
 import sys
-
 import requests
 from requests.exceptions import RequestException
 
 
+def detect_language(code: str, url: str) -> str:
+    """
+    Ask the model to identify the programming language of the generated code.
+    """
+
+    data = {
+        "model": "deepseek-coder:1.3b",
+        "prompt": f"Identify the programming language of the following code. Return only the language name.\n\n{code}",
+        "stream": False,
+    }
+
+    try:
+        response = requests.post(url, json=data, timeout=60)
+        response.raise_for_status()
+        result = response.json()
+        language = result.get("response", "").strip().lower()
+        return language
+    except Exception:
+        return "txt"
+
+
 def main() -> None:
-    # Accept a prompt from command-line arguments, or fall back to interactive input
+
     args = sys.argv[1:]
+
     if args:
         prompt = " ".join(args)
     else:
         prompt = input("Enter your prompt: ")
 
-    # Reject empty or whitespace-only prompts immediately
     if not prompt.strip():
         print("Prompt cannot be empty.")
         sys.exit(1)
 
-    # Ollama local API endpoint
     url = "http://localhost:11434/api/generate"
 
-    # Request payload: instruct the model to return code only
-    data: dict[str, str | bool] = {
+    data = {
         "model": "deepseek-coder:1.3b",
         "prompt": f"Write code for: {prompt}. Output code only.",
         "stream": False,
     }
 
-    # Send the request to the Ollama server
     try:
         response = requests.post(url, json=data, timeout=60)
-        response.raise_for_status()  # Raise an error for 4xx/5xx HTTP status codes
+        response.raise_for_status()
         result = response.json()
+
     except RequestException as e:
         print(f"Request failed: {e}")
         sys.exit(1)
+
     except ValueError:
-        # response.json() raises ValueError when the body is not valid JSON
         print("Server returned a non-JSON response.")
         sys.exit(1)
 
-    # Validate that the expected field is present in the response
     output = result.get("response")
+
     if output is None:
         print("No 'response' field found in server output.")
         print(result)
         sys.exit(1)
 
-    # Extract the first fenced code block (``` ... ```) if one exists;
-    # otherwise use the raw output as the code
     code_blocks = re.findall(r"```(?:\w+\n)?(.*?)```", output, re.DOTALL)
     code = code_blocks[0] if code_blocks else output
 
-    # Write the generated code to a file for later execution
-    with open("generated_logic.py", "w") as f:
+    # -------- LANGUAGE DETECTION --------
+
+    language = detect_language(code, url)
+
+    language_extensions = {
+        "python": ".py",
+        "c++": ".cpp",
+        "cpp": ".cpp",
+        "c": ".c",
+        "java": ".java",
+        "javascript": ".js",
+        "typescript": ".ts",
+        "go": ".go",
+        "rust": ".rs",
+        "php": ".php",
+        "ruby": ".rb"
+    }
+
+    ext = language_extensions.get(language, ".txt")
+
+    filename = "generated_logic" + ext
+
+    with open(filename, "w") as f:
         f.write(code)
 
-    print("Code written to generated_logic.py")
+    print(f"Detected language: {language}")
+    print(f"Code written to {filename}")
 
 
 if __name__ == "__main__":
