@@ -1,3 +1,5 @@
+import code
+from fileinput import filename
 import re
 import sys
 
@@ -104,6 +106,38 @@ def detect_language(code: str, url: str) -> str:
         inferred = infer_language_from_code(code)
         return inferred if inferred else "txt"
 
+def detect_filename(code: str, url: str) -> str:
+    """
+    Ask the model to suggest a suitable filename for the generated code.
+    Returns filename without extension.
+    """
+    data: dict[str, str | bool] = {
+        "model": "deepseek-coder:1.3b",
+        "prompt": (
+            "Suggest a short descriptive filename for the following code. "
+            "Return only the filename without extension.\n\n"
+            f"{code}"
+        ),
+        "stream": False,
+    }
+
+    try:
+        response = requests.post(url, json=data, timeout=60)
+        response.raise_for_status()
+        result = response.json()
+
+        name = result.get("response", "").strip().lower()
+
+        # Remove invalid filename characters
+        name = re.sub(r"[^a-z0-9_]", "", name)
+
+        if not name:
+            return "generated_logic"
+
+        return name
+
+    except Exception:
+        return "generated_logic"
 
 def main() -> None:
     # Accept a prompt from command-line arguments, or fall back to interactive input
@@ -178,15 +212,22 @@ def main() -> None:
 
     # Default to .txt if the detected language is unknown.
     ext = language_extensions.get(language, ".txt")
-    filename = "generated_logic" + ext
+# Ask the model to suggest a filename
+    suggested_name = detect_filename(code, url)
 
-    # Write the generated code to a language-appropriate file.
+# Allow user to confirm or modify
+    user_filename = input(f"Enter file name [{suggested_name}]: ").strip()
+
+    if not user_filename:
+        user_filename = suggested_name
+
+    filename = user_filename + ext
+
     with open(filename, "w", encoding="utf-8") as f:
         f.write(code)
 
     print(f"Detected language: {language}")
-    print(f"Code written to {filename}")
-
+    print(f"File saved as: {filename}")
 
 if __name__ == "__main__":
     main()
