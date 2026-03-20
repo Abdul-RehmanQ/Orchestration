@@ -5,36 +5,73 @@ import time
 from pathlib import Path
 
 TEST_PROMPTS = [
-    "make a hello world in python",
-    "write a c++ program that adds two numbers",
-    "create a function that reverses a string in python",
-    "write a c program that prints a multiplication table",
-    "make a javascript function that checks if a number is even or odd",
-
-    "build a python script that reads a text file and counts word frequency",
-    "write a c++ class for a stack data structure with push pop and peek",
-    "create a python function that validates an email address using regex",
-    "make a javascript program that sorts an array of objects by age",
-    "write a python script that fetches data from a url and prints the response",
-
-    "create a simple login system in python",
-    "build a binary search tree in c++",
-    "write a rest api client in python that handles authentication",
-    "make a task manager program in python with add remove and list features",
-    "create a linked list implementation with insert delete and search in c++",
-
-    "write code for sorting",
-    "make something that converts celsius to fahrenheit",
-    "create an html page with a contact form and css styling",
+    # --- Previously failing TypeScript cases (now fixed by infer_language_from_code) ---
+    "create a typescript function that fetches and parses json from an api",
+    "create a typescript enum for http status codes",
+    "write a typescript class for a generic stack data structure",
     "write a typescript interface for a user profile with name age and email",
-    "build a concurrent file downloader in go",
+    "build a typescript utility type that makes all fields of an object optional",
+
+    # --- TypeScript vs JavaScript boundary ---
+    "write a javascript arrow function that filters even numbers from an array",
+    "create a javascript class with private fields using the hash syntax",
+    "write a typescript function that accepts a generic type and returns an array",
+    "build a typescript module that exports an interface and a class implementing it",
+    "create a javascript async function that retries a failed fetch three times",
+
+    # --- CSS vs JavaScript boundary (previously misclassified) ---
+    "write css variables for a dark mode color scheme",
+    "create a css flexbox layout for a card grid",
+    "write a javascript object that maps color names to hex values",
+    "build a css keyframe animation for a bouncing ball",
+    "create a javascript function that toggles a css class on a dom element",
+
+    # --- Long C++ (confirmed fixed, keep as regression tests) ---
+    "build a binary search tree in c++",
+    "create a linked list implementation with insert delete and search in c++",
+    "implement a graph with bfs and dfs traversal in c++",
+    "write a red black tree implementation in c++",
+    "build an lru cache in c++ using a hashmap and doubly linked list",
+
+    # --- Rust (small but distinctive syntax) ---
+    "write a rust struct for a point in 2d space with distance method",
+    "create a rust function that reads lines from stdin and counts words",
+    "build a rust enum for a result type with ok and error variants",
+    "write a rust trait for a drawable shape with area and perimeter",
+    "implement a rust hashmap that counts character frequency in a string",
+
+    # --- Go concurrency patterns ---
+    "write a go program that uses channels to sum numbers concurrently",
+    "build a go http middleware that logs request duration",
+    "create a go struct with methods for a simple key value store",
+    "write a go function that reads a json file into a struct",
+    "implement a rate limiter in go using a ticker and channel",
+
+    # --- Java (often confused with C++ by small models) ---
+    "write a java generic class for a pair of two values",
+    "create a java interface for a shape with area and perimeter methods",
+    "build a java program that reads a file line by line and prints each line",
+    "write a java enum for days of the week with an is weekend method",
+    "implement a java singleton pattern with thread safety",
+
+    # --- Mixed HTML and JS in one file ---
+    "create an html page with a button that shows an alert when clicked",
+    "build an html page with a javascript countdown timer",
+    "write an html form that validates fields with javascript before submit",
+
+    # --- Very short / extreme vague prompts ---
+    "code",
+    "help",
+    "do something",
+    "x",
+    "write",
 ]
 
 BACKEND = "qwen"  # or "deepseek"
 PYTHON_CMD = sys.executable
 TARGET_SCRIPT = "prompt_interface.py"
 RESULTS_FILE = "results.txt"
-TIMEOUT_SECONDS = 180
+TIMEOUT_SECONDS = 240
 
 
 def parse_field(line_prefix: str, output_text: str) -> str:
@@ -45,7 +82,6 @@ def parse_field(line_prefix: str, output_text: str) -> str:
 
 
 def run_one(prompt: str) -> dict:
-    # Keep each prompt as one CLI argument to preserve punctuation/spacing safely.
     cmd = [PYTHON_CMD, TARGET_SCRIPT, "--backend", BACKEND, prompt]
 
     start = time.perf_counter()
@@ -107,7 +143,7 @@ def build_summary(rows: list[dict]) -> dict:
     }
 
 
-def write_results(rows: list[dict], summary: dict) -> None:
+def init_results_file() -> None:
     with open(RESULTS_FILE, "w", encoding="utf-8", newline="") as f:
         writer = csv.DictWriter(
             f,
@@ -122,8 +158,27 @@ def write_results(rows: list[dict], summary: dict) -> None:
             delimiter="\t",
         )
         writer.writeheader()
-        writer.writerows(rows)
 
+
+def append_result_row(row: dict) -> None:
+    with open(RESULTS_FILE, "a", encoding="utf-8", newline="") as f:
+        writer = csv.DictWriter(
+            f,
+            fieldnames=[
+                "prompt",
+                "response_time_sec",
+                "file_name",
+                "detected_language",
+                "status",
+                "error",
+            ],
+            delimiter="\t",
+        )
+        writer.writerow(row)
+
+
+def append_summary(summary: dict) -> None:
+    with open(RESULTS_FILE, "a", encoding="utf-8", newline="") as f:
         f.write("\n")
         f.write("summary_key\tsummary_value\n")
         f.write(f"total\t{summary['total']}\n")
@@ -137,19 +192,34 @@ def main() -> None:
     if not Path(TARGET_SCRIPT).exists():
         raise FileNotFoundError(f"{TARGET_SCRIPT} not found in current directory.")
 
-    rows = [run_one(p) for p in TEST_PROMPTS]
-    summary = build_summary(rows)
-    write_results(rows, summary)
+    print(f"Running {len(TEST_PROMPTS)} prompts against backend: {BACKEND}")
+    print(f"Target script: {TARGET_SCRIPT}")
+    print("-" * 60)
 
-    print(f"Batch complete. Results written to {RESULTS_FILE}")
-    print(
-        "Summary: "
-        f"total={summary['total']}, "
-        f"ok={summary['ok']}, "
-        f"failed={summary['failed']}, "
-        f"timeout={summary['timeout']}, "
-        f"avg_time_sec={summary['avg_time_sec']}"
-    )
+    rows = []
+    init_results_file()
+
+    try:
+        for i, prompt in enumerate(TEST_PROMPTS, 1):
+            print(f"[{i:02d}/{len(TEST_PROMPTS)}] {prompt[:60]}")
+            result = run_one(prompt)
+            rows.append(result)
+            append_result_row(result)
+            status_label = result["status"].upper()
+            print(f"       -> {status_label} | {result['file_name']} | {result['response_time_sec']}s")
+    except KeyboardInterrupt:
+        print("\nInterrupted by user. Saving partial results...")
+    finally:
+        summary = build_summary(rows)
+        append_summary(summary)
+
+        print("-" * 60)
+        print(f"Batch complete. Results written to {RESULTS_FILE}")
+        print(
+            f"Summary: total={summary['total']}, ok={summary['ok']}, "
+            f"failed={summary['failed']}, timeout={summary['timeout']}, "
+            f"avg_time_sec={summary['avg_time_sec']}"
+        )
 
 
 if __name__ == "__main__":
