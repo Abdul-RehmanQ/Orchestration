@@ -1,0 +1,66 @@
+prompt	response_time_sec	file_name	expected_language	detected_language	language_match	extension_match	status	error
+write a c++ program that reads a file and prints each line	24.502	read_input.cpp	c++	c++	True	True	correct	Enter file name [read_input]:
+implement a stack using arrays in c++	63.902	stack.cpp	c++	c++	True	True	correct	Enter file name [stack]:
+create a c++ template function that returns the maximum of two values	13.880	max.css	c++	css	False	False	incorrect	Enter file name [max]:
+write a c++ program that sorts a vector of integers using bubble sort	71.952	bubble_sort.cpp	c++	c++	True	True	correct	Enter file name [bubble_sort]:
+build a c++ class for a circular queue with enqueue and dequeue	71.457	circularqueue.ts	c++	typescript	False	False	incorrect	Enter file name [circularqueue]:
+write a python function that flattens a nested list	26.474	flatten_list.py	python	python	True	True	correct	Enter file name [flatten_list]:
+create a python class that implements a binary heap	57.555	binary_heap.py	python	python	True	True	correct	Enter file name [binary_heap]:
+build a python script that parses command line arguments using argparse	48.646	parse_args.py	python	python	True	True	correct	Enter file name [parse_args]:
+write a python generator that yields fibonacci numbers	14.495	fibonacci_generator.py	python	python	True	True	correct	Enter file name [fibonacci_generator]:
+create a python dataclass for a student with name age and grades	13.850	student.py	python	python	True	True	correct	Enter file name [student]:
+write a rust program that reads a csv file line by line	55.063	read_csv.rs	rust	rust	True	True	correct	Enter file name [read_csv]:
+create a rust struct for a stack with push pop and peek methods	21.619	stack.rs	rust	rust	True	True	correct	Enter file name [stack]:
+implement a rust function that sorts a vector using quicksort	43.898	quicksort.rs	rust	rust	True	True	correct	Enter file name [quicksort]:
+build a rust program that spawns threads and joins them	25.014	threads.rs	rust	rust	True	True	correct	Enter file name [threads]:
+write a rust enum for a traffic light with red yellow and green states	12.644	trafficlight.java	rust	java	False	False	incorrect	Enter file name [trafficlight]:
+write a go program that reads environment variables and prints them	22.624	env_vars.go	go	go	True	True	correct	Enter file name [env_vars]:
+create a go interface for an animal with speak and move methods	42.815	dog_buddy.go	go	go	True	True	correct	Enter file name [dog_buddy]:
+build a go program that writes json to a file	27.979	json_output.go	go	go	True	True	correct	Enter file name [json_output]:
+implement a go function that reverses a slice of integers	23.174	reverse_slice.go	go	go	True	True	correct	Enter file name [reverse_slice]:
+write a go program that reads a text file and counts lines	25.911	file_count.go	go	go	True	True	correct	Enter file name [file_count]:
+write a java program that sorts an array using bubble sort	33.667	bubblesort.java	java	java	True	True	correct	Enter file name [bubblesort]:
+create a java class for a binary search tree with insert and search	57.665	binarysearchtree.java	java	java	True	True	correct	Enter file name [binarysearchtree]:
+build a java program that reads user input and checks if it is a palindrome	31.671	palindromechecker.java	java	java	True	True	correct	Enter file name [palindromechecker]:
+implement a java stack using arraylist	47.106	stack.java	java	java	True	True	correct	Enter file name [stack]:
+write a java program that demonstrates inheritance with animal and dog	26.898	dog_sound.java	java	java	True	True	correct	Enter file name [dog_sound]:
+write a typescript function that debounces another function	18.269	debounce.ts	typescript	typescript	True	True	correct	Enter file name [debounce]:
+create a typescript type guard for checking if a value is a string	12.418	isstring.ts	typescript	typescript	True	True	correct	Enter file name [isstring]:
+build a typescript class for a linked list with generic type support	30.496	linkedlist.ts	typescript	typescript	True	True	correct	Enter file name [linkedlist]:
+write a typescript decorator that logs method calls	27.942	myclass.ts	typescript	typescript	True	True	correct	Enter file name [myclass]:
+create a typescript mapped type that makes all properties readonly	12.800	readonly.ts	typescript	typescript	True	True	correct	Enter file name [readonly]:
+write a javascript function that deep clones an object	18.822	deep_clone.js	javascript	javascript	True	True	correct	Enter file name [deep_clone]:
+create a javascript module that exports utility functions for arrays	33.439	arrayutils.js	javascript	javascript	True	True	correct	Enter file name [arrayutils]:
+build a javascript function that throttles another function	56.712	throttle.js	javascript	javascript	True	True	correct	Enter file name [throttle]:
+write a javascript class for a simple pub sub event system	25.087	eventsystem.js	javascript	javascript	True	True	correct	Enter file name [eventsystem]:
+implement a javascript function that memoizes another function	18.824	memoize.js	javascript	javascript	True	True	correct	Enter file name [memoize]:
+write css for a sticky navigation bar that stays at the top on scroll	21.893	navbar.css	css	css	True	True	correct	Enter file name [navbar]:
+create css styles for a modal dialog with overlay background	35.732	modal_dialog_styles.css	css	css	True	True	correct	Enter file name [modal_dialog_styles]:
+build css for a responsive two column layout using grid	30.105	container.css	css	css	True	True	correct	Enter file name [container]:
+write css for a card component with shadow hover effect	21.094	card.css	css	css	True	True	correct	Enter file name [card]:
+create an html page with a dropdown menu and submenu items	44.394	dropdown_menu.html	html	html	True	True	correct	Enter file name [dropdown_menu]:
+write an html page that displays a data table with alternating row colors	73.938	index.html	html	html	True	True	correct	Enter file name [index]:
+build an html registration form with name email password and confirm fields	67.702	registration_form.html	html	html	True	True	correct	Enter file name [registration_form]:
+create an html page with an image carousel using javascript	68.669	image_carousel.html	html	html	True	True	correct	Enter file name [image_carousel]:
+write a function that checks if a number is prime	16.308	is_prime.py	python	python	True	True	correct	Enter file name [is_prime]:
+implement a binary search algorithm	19.805	binary_search.py	python	python	True	True	correct	Enter file name [binary_search]:
+create a class that represents a rectangle with area and perimeter	16.554	rectangle.py	python	python	True	True	correct	Enter file name [rectangle]:
+write a function that converts a string to title case	11.553	to_title_case.py	python	python	True	True	correct	Enter file name [to_title_case]:
+build a simple stack data structure	27.150	stack.py	python	python	True	True	correct	Enter file name [stack]:
+write code	11.758	example_script.py		python			no_expected	Enter file name [example_script]:
+make a program	15.062	hello_world.py		python			no_expected	Enter file name [hello_world]:
+do something	11.590	example_script.py		python			no_expected	Enter file name [example_script]:
+x	11.763	example_script.py		python			no_expected	Enter file name [example_script]:
+write	11.480	hello_world.py		python			no_expected	Enter file name [hello_world]:
+
+summary_key	summary_value
+total	53
+correct	45
+incorrect	3
+system_error	0
+timeout	0
+no_expected	5
+evaluable	48
+language_accuracy	93.8%
+extension_accuracy	93.8%
+avg_time_sec	31.619
